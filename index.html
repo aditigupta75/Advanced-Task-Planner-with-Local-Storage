@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Advanced Task Planner with localStorage persistence">
+    <meta name="theme-color" content="#6366f1">
+    <title>Task Planner Pro</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Theme Toggle -->
+    <button class="theme-toggle" aria-label="Toggle dark mode" title="Toggle Theme">
+        <i class="fas fa-moon"></i>
+    </button>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="logo">
+                    <i class="fas fa-tasks"></i>
+                    Task Planner Pro
+                </h1>
+                <p class="subtitle">Organize your life, one task at a time</p>
+            </div>
+            <div class="stats">
+                <div class="stat-card">
+                    <i class="fas fa-list"></i>
+                    <div>
+                        <span class="stat-number" id="totalTasks">0</span>
+                        <span class="stat-label">Total</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <span class="stat-number" id="completedTasks">0</span>
+                        <span class="stat-label">Completed</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-clock"></i>
+                    <div>
+                        <span class="stat-number" id="pendingTasks">0</span>
+                        <span class="stat-label">Pending</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Add Task Form -->
+        <section class="add-task-section">
+            <h2 class="section-title">
+                <i class="fas fa-plus-circle"></i>
+                Add New Task
+            </h2>
+            <form id="taskForm" class="task-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="taskTitle">
+                            <i class="fas fa-heading"></i>
+                            Task Title
+                        </label>
+                        <input 
+                            type="text" 
+                            id="taskTitle" 
+                            placeholder="Enter task title..."
+                            required
+                            aria-required="true"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="taskCategory">
+                            <i class="fas fa-folder"></i>
+                            Category
+                        </label>
+                        <select id="taskCategory" required aria-required="true">
+                            <option value="">Select category</option>
+                            <option value="work">💼 Work</option>
+                            <option value="personal">👤 Personal</option>
+                            <option value="shopping">🛒 Shopping</option>
+                            <option value="health">💪 Health</option>
+                            <option value="education">📚 Education</option>
+                            <option value="other">📌 Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="taskPriority">
+                            <i class="fas fa-flag"></i>
+                            Priority
+                        </label>
+                        <select id="taskPriority" required aria-required="true">
+                            <option value="">Select priority</option>
+                            <option value="high">🔴 High</option>
+                            <option value="medium">🟡 Medium</option>
+                            <option value="low">🟢 Low</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="taskDate">
+                            <i class="fas fa-calendar"></i>
+                            Due Date
+                        </label>
+                        <input 
+                            type="date" 
+                            id="taskDate" 
+                            required
+                            aria-required="true"
+                        >
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="taskDescription">
+                            <i class="fas fa-align-left"></i>
+                            Description
+                        </label>
+                        <textarea 
+                            id="taskDescription" 
+                            placeholder="Add task description (optional)..."
+                            rows="3"
+                        ></textarea>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-plus"></i>
+                    <span id="submitBtnText">Add Task</span>
+                </button>
+                <button type="button" id="cancelEdit" class="btn btn-secondary" style="display: none;">
+                    <i class="fas fa-times"></i>
+                    Cancel
+                </button>
+            </form>
+        </section>
+
+        <!-- Filter & Sort Controls -->
+        <section class="controls-section">
+            <div class="controls">
+                <div class="filter-group">
+                    <label for="filterCategory">
+                        <i class="fas fa-filter"></i>
+                        Filter by Category
+                    </label>
+                    <select id="filterCategory">
+                        <option value="all">All Categories</option>
+                        <option value="work">💼 Work</option>
+                        <option value="personal">👤 Personal</option>
+                        <option value="shopping">🛒 Shopping</option>
+                        <option value="health">💪 Health</option>
+                        <option value="education">📚 Education</option>
+                        <option value="other">📌 Other</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="filterPriority">
+                        <i class="fas fa-flag"></i>
+                        Filter by Priority
+                    </label>
+                    <select id="filterPriority">
+                        <option value="all">All Priorities</option>
+                        <option value="high">🔴 High</option>
+                        <option value="medium">🟡 Medium</option>
+                        <option value="low">🟢 Low</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="filterStatus">
+                        <i class="fas fa-check-circle"></i>
+                        Filter by Status
+                    </label>
+                    <select id="filterStatus">
+                        <option value="all">All Tasks</option>
+                        <option value="pending">Pending</option>
+                        <option value="completed">Completed</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="sortBy">
+                        <i class="fas fa-sort"></i>
+                        Sort By
+                    </label>
+                    <select id="sortBy">
+                        <option value="date-asc">Date (Oldest)</option>
+                        <option value="date-desc">Date (Newest)</option>
+                        <option value="priority-high">Priority (High first)</option>
+                        <option value="priority-low">Priority (Low first)</option>
+                        <option value="title">Title (A-Z)</option>
+                    </select>
+                </div>
+            </div>
+
+            <button class="btn btn-danger" id="clearAll">
+                <i class="fas fa-trash-alt"></i>
+                Clear All Tasks
+            </button>
+        </section>
+
+        <!-- Tasks List -->
+        <section class="tasks-section">
+            <h2 class="section-title">
+                <i class="fas fa-list-check"></i>
+                Your Tasks
+            </h2>
+            <div id="tasksList" class="tasks-grid">
+                <!-- Tasks will be inserted here -->
+            </div>
+            <div id="emptyState" class="empty-state">
+                <i class="fas fa-inbox"></i>
+                <h3>No tasks yet!</h3>
+                <p>Add your first task to get started</p>
+            </div>
+        </section>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast" role="alert" aria-live="polite"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
